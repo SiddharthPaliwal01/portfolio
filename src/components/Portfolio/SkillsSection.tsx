@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Code, Database, Wrench, Palette } from "lucide-react";
 import { motion } from "framer-motion";
-import { useIntersectionObserver } from "@/hooks/use-performance";
+import { useRef, useEffect, useState } from "react";
 
 const SkillsSection = () => {
   const skillCategories = [
@@ -58,7 +58,22 @@ const SkillsSection = () => {
     }
   ];
 
-  const { targetRef, isIntersecting } = useIntersectionObserver();
+  // Simple intersection observer hook
+  const targetRef = useRef<HTMLDivElement>(null);
+  const [isIntersecting, setIsIntersecting] = useState(false);
+  
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsIntersecting(entry.isIntersecting),
+      { threshold: 0.1 }
+    );
+    
+    if (targetRef.current) {
+      observer.observe(targetRef.current);
+    }
+    
+    return () => observer.disconnect();
+  }, []);
 
   const containerVariants = {
     hidden: { opacity: 0 },
